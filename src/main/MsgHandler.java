@@ -1,9 +1,7 @@
 package main;
 
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.channel.*;
 
 /**
  * Created by Administrator on 2016/11/18.
@@ -11,10 +9,24 @@ import org.jboss.netty.channel.SimpleChannelHandler;
 public class MsgHandler extends SimpleChannelHandler {
 
     @Override
+    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+        super.channelConnected(ctx, e);
+    }
+
+    @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
         System.out.println("接收到客户端的消息...");
-//        e.getChannel().write(e.getMessage());
-//        e.getChannel().write(e.getMessage());
+        ChannelBuffer buffer = (ChannelBuffer) e.getMessage();
+        if (buffer != null) {
+            byte[] b = new byte[buffer.array().length];
+            while (buffer.readable()) {
+                buffer.getBytes(0, b);
+            }
+            System.out.println("接收到的信息为："+new String(b));
+        }else {
+            System.out.println("接收到的信息为 buffer==null");
+        }
+
     }
 
     @Override
